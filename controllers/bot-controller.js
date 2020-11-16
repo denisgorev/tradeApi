@@ -1,4 +1,4 @@
-const deltaMorningCurrentPrice = require('../tinkoff-api/deltaMorningCurrentPrice')
+const deltaMorningCurrentPrice = require('../tinkoff-api/deltaPrices')
 
 const {
     Telegraf

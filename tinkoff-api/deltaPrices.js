@@ -9,29 +9,30 @@ const api = new OpenAPI({
     socketURL
 });
 
+const getDateTime = (morningTime=0, increment=0) => {
+    if (morningTime === 1) {
+        const date = new Date();
+        let year = date.getFullYear()
+        let month = date.getMonth()
+        let currentDate = date.getDate()
+       
+        let minutes = increment
+        var d = new Date(year, month, currentDate, 10, minutes, 0);
+        let m = moment(d).format();
+        console.log(m);
+        return m
+    } else {
+        let m = moment().format();
+        console.log(m);
+        return m
+    } 
+}
+
 const deltaMorningCurrentPrice = async () => {
     const figis = [];
     let deltaArray = []
     try {
         const portfolio = await api.portfolio();
-        const getDateTime = (morningTime=0, increment=0) => {
-            if (morningTime === 1) {
-                const date = new Date();
-                let year = date.getFullYear()
-                let month = date.getMonth()
-                let currentDate = date.getDate()
-               
-                let minutes = increment
-                var d = new Date(year, month, currentDate, 10, minutes, 0);
-                let m = moment(d).format();
-                console.log(m);
-                return m
-            } else {
-                let m = moment().format();
-                console.log(m);
-                return m
-            } 
-        }
 
         for (let iter of portfolio.positions) {
             figis.push(iter.figi)
@@ -39,23 +40,21 @@ const deltaMorningCurrentPrice = async () => {
 
         console.log(figis);
 
-                    // from: '2020-11-16T10:00:33.131642+03:00',
-                    //to: '2020-11-16T10:05:33.131642+03:00',
 
-        for (let j = 0; j < figis.length; j++) {
-            console.log(figis[j])
+        for (let figi of figis) {
+            console.log(figi)
             const morningPrice =
                 await api.candlesGet({
                     from: getDateTime(morningTime=1),
                     to: getDateTime(morningTime=1, increment=6),
 
-                    figi: figis[j],
+                    figi: figi,
                     interval: '5min',
                 })
 
             const currentPrice =
                 await api.orderbookGet({
-                        figi: figis[j],
+                        figi: figi,
                         depth: 1
                     },
                     (ob) => {
@@ -65,7 +64,7 @@ const deltaMorningCurrentPrice = async () => {
             console.log(morningPrice.candles[0].o)
             console.log(currentPrice.lastPrice)
             const instrument = await api.searchOne({
-                figi: figis[j]
+                figi: figi
             })
             const delta = currentPrice.lastPrice - morningPrice.candles[0].o;
             console.log(instrument.name)
@@ -86,12 +85,19 @@ const deltaMorningCurrentPrice = async () => {
     }
 }
 
-// try {
-//     api.operations({
 
-//     })
-// } catch (err) {
-//     console.log(err)
-// }
+const portfolioDelta = async () => {
+    try {
+    const operations = api.operations({
+        from: getDateTime(morningTime=1),
+        to: getDateTime(),
+    })
+    return operations
+} catch (err) {
+    console.log(err)
+}
+}
+
 
 exports.deltaMorningCurrentPrice = deltaMorningCurrentPrice;
+exports.portfolioDelta = portfolioDelta;

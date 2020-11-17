@@ -3,6 +3,7 @@ const moment = require('moment')
 const apiURL = 'https://api-invest.tinkoff.ru/openapi/';
 const socketURL = 'wss://api-invest.tinkoff.ru/openapi/md/v1/md-openapi/ws';
 const secretToken = process.env.TOKEN; // токен для сандбокса
+const FIGIUSD = 'BBG0013HGFT4';
 const api = new OpenAPI({
     apiURL,
     secretToken,
@@ -167,9 +168,9 @@ const portfolioState = async () => {
         console.log(instrument.currency)
         instrument.currency === 'RUB' ? sum.rub = sum.rub + currentPrice * quantity : sum.usd = sum.usd + currentPrice * quantity
     }
-    sum.currentUSD = await currentPriceGetter('BBG0013HGFT4')
-    sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter('BBG0013HGFT4')
-    sum.totalUSD = sum.rub / await currentPriceGetter('BBG0013HGFT4') + sum.usd
+    sum.currentUSD = await currentPriceGetter(FIGIUSD)
+    sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD)
+    sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd
 
     console.log(sum) 
     return sum

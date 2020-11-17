@@ -18,12 +18,26 @@ const deltaPortfolioCostApi = async (req, res, next) => {
         deltaPortfolioCost = await deltaPrices.portfolioDelta();
     } catch (err) {
         console.log(err)
+        return next(err)
     }
     res.json({
         cost: deltaPortfolioCost
     })
 }
 
+const portfolioStateApi = async (req, res, next) => {
+    let portfolioState = 0;
+    try {
+        portfolioState = await deltaPrices.portfolioDelta();
+    } catch (err) {
+        console.log(err)
+        return next(err)
+    }
+    res.json({
+        state: portfolioState
+    })
+}
+    exports.portfolioStateApi = portfolioStateApi;
     exports.deltaMorningCurrentPriceApi = deltaMorningCurrentPriceApi;
     exports.deltaPortfolioCostApi = deltaPortfolioCostApi;
 

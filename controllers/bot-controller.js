@@ -36,11 +36,11 @@ const telegramBot = () => {
             
 
             ctx.replyWithHTML(
-                `Оценка рублевых активов: ${state.rub},\n` +
-                `Оценка долларовых активов: ${state.usd},\n` +
-                `Стоимость доллара ${state.currentUSD},\n` +
-                `Итого оценка в рублях ${state.totalRUB},\n` +
-                `Итого оценка в долларах ${state.totalUSD}`)
+                `Оценка рублевых активов: ${state.rub.toFixed(2)},\n` +
+                `Оценка долларовых активов: ${state.usd.toFixed(2)},\n` +
+                `Стоимость доллара ${state.currentUSD.toFixed(2)},\n` +
+                `Итого оценка в рублях ${state.totalRUB.toFixed(2)},\n` +
+                `Итого оценка в долларах ${state.totalUSD.toFixed(2)}`)
 
         } catch (err) {
             console.log(err)

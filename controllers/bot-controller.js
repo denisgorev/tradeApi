@@ -15,12 +15,12 @@ const telegramBot = () => {
             const deltaPrice = await deltaPrices.deltaMorningCurrentPrice();
 
             for (let i = 0; i < deltaPrice.length; i++) {
-                ctx.reply(`
-                Наименование актива: ${deltaPrice[i].name}
-                Цена открытия: ${deltaPrice[i].openPrice}
-                Цена текущая: ${deltaPrice[i].currentPrice}
-                Время запроса: ${deltaPrice[i].time}
-                Изменение цены с начала торгов: ${typeof deltaPrice[i].delta == 'number' ? deltaPrice[i].delta.toFixed(3) + ' ' + deltaPrice[i].currency : 'Нет данных' } 
+                ctx.replyWithHTML(
+                `Наименование актива: ${deltaPrice[i].name}, \n` +
+                `Цена открытия: ${deltaPrice[i].openPrice} \n` +
+                `Цена текущая: ${deltaPrice[i].currentPrice}\n` +
+                `Время запроса: ${deltaPrice[i].time} \n` +
+                `Изменение цены с начала торгов: ${typeof deltaPrice[i].delta == 'number' ? deltaPrice[i].delta.toFixed(3) + ' ' + deltaPrice[i].currency : 'Нет данных' } 
                 `)
             }
         } catch (err) {

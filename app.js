@@ -1,5 +1,5 @@
 
-
+const port = process.env.PORT || 5000;
 const express = require("express");
 const app = express();
 require('dotenv').config();
@@ -62,4 +62,4 @@ app.use((error, req, res, next) => {
 telegramBot.telegramBot()
 
 
-app.listen(5000, () => console.log("Server is started"));
+app.listen(port, () => console.log("Server is started"));

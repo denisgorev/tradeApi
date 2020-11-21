@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const deltaMorningCurrentPriceApi = require('../controllers/api-controller')
+const deltaPriceApi = require('../controllers/api-controller')
 
-router.get('/deltaprice/', deltaMorningCurrentPriceApi.deltaMorningCurrentPriceApi)
+router.get('/deltaprice/', deltaPriceApi.deltaMorningCurrentPriceApi)
+router.get('/deltaportfolio/', deltaPriceApi.deltaPortfolioCostApi)
+router.get('/portfoliostate/', deltaPriceApi.portfolioStateApi)
 
 module.exports = router;

@@ -164,15 +164,15 @@ const portfolioState = async () => {
         const instrument = await api.searchOne({ticker})
         const currentPrice = await currentPriceGetter(instrument.figi)
         const quantity = quantities[iter]
-        console.log(currentPrice)
-        console.log(instrument.currency)
+        // console.log(currentPrice)
+        // console.log(instrument.currency)
         instrument.currency === 'RUB' ? sum.rub = sum.rub + currentPrice * quantity : sum.usd = sum.usd + currentPrice * quantity
     }
     sum.currentUSD = await currentPriceGetter(FIGIUSD)
     sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD)
     sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd
 
-    console.log(sum) 
+    // console.log(sum) 
     return sum
 }
 

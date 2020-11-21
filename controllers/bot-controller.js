@@ -6,7 +6,7 @@ const {
 
 const telegramBot = () => {
     const bot = new Telegraf(process.env.BOT_TOKEN) //сюда помещается токен, который дал botFather
-    bot.start((ctx) => ctx.reply(ctx.from))
+    // bot.start((ctx) => ctx.reply(ctx.from))
     bot.start((ctx) => ctx.reply(`Привет, ${ctx.from.first_name}! Получи информацию по своему брокерскому счету. Для получения списка возможных операций внапиши /help`)) //ответ бота на команду /start
     bot.help((ctx) => ctx.reply('Пока я умею выполнять только команды /deltaPrice и /portfolioState. /deltaPrice показывает изменение в стоимости 1 единицы актива по портфелю с начала торгов. /portfolioState показывает текущее состояние портфлея')) //ответ бота на команду /help
     bot.on('sticker', (ctx) => ctx.reply('')) //bot.on это обработчик введенного юзером сообщения, в данном случае он отслеживает стикер, можно использовать обработчик текста или голосового сообщения

@@ -98,7 +98,7 @@ const deltaMorningCurrentPrice = async () => {
 
 
         let currentPrice = await currentPriceGetter(figi);
-        
+
         console.log(morningPrice)
         morningPrice = morningPrice.candles.length == 0 ? 'Нет данных по открытию' : morningPrice.candles[0].c;
 
@@ -136,7 +136,7 @@ const portfolioDelta = async () => {
     let operations = []
     const incomesUSD = []
     const incomesRUB = []
-    
+
     try {
         operations = await api.operations({
             from: getDateTime(morningTime = 1),
@@ -156,12 +156,20 @@ const portfolioDelta = async () => {
 }
 
 const portfolioState = async () => {
-    const sum = {rub: 0, usd: 0, currentUSD: 0, totalRUB: 0, totalUSD: 0}
+    const sum = {
+        rub: 0,
+        usd: 0,
+        currentUSD: 0,
+        totalRUB: 0,
+        totalUSD: 0
+    }
     const [figis, tickers, quantities] = await currentFIGIs();
 
-    for (let iter=0; iter < tickers.length; iter++) {
+    for (let iter = 0; iter < tickers.length; iter++) {
         const ticker = tickers[iter];
-        const instrument = await api.searchOne({ticker})
+        const instrument = await api.searchOne({
+            ticker
+        })
         const currentPrice = await currentPriceGetter(instrument.figi)
         const quantity = quantities[iter]
         // console.log(currentPrice)

@@ -1,5 +1,5 @@
-const WAIT_INTERVAL = 9000//1680000 // 28 minutes
-const TIMEOUT = 27005//28800000 //8 hours
+const WAIT_INTERVAL = 1680000 // 28 minutes
+const TIMEOUT = 28800000 //8 hours
 let interval = 0;
 
 const port = process.env.PORT || 5000;

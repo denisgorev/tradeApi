@@ -175,7 +175,8 @@ const portfolioState = async () => {
         const quantity = quantities[iter]
         instrument.currency === 'RUB' ? sum.rub = sum.rub + currentPrice * quantity : sum.usd = sum.usd + currentPrice * quantity
     }
-    sum.rub += sum.rub_cur.currencies[0].balance;
+    sum.rub_cur = sum.rub_cur.currencies[0].balance;
+    sum.rub += sum.rub_cur;
     sum.currentUSD = await currentPriceGetter(FIGIUSD);
     sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD);
     sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd;

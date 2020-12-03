@@ -64,7 +64,7 @@ const axios = require('axios');
 
 const wakeUp = async () => {
     try{
-        await axios.get('http://localhost:5000/tinkoffapi/portfolio/')
+        await axios.get('https://still-bayou-49406.herokuapp.com/tinkoffapi/portfolio/')
     } catch (err){
         console.log(err)
     }

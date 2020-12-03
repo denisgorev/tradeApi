@@ -40,7 +40,7 @@ const telegramBot = () => {
                 ctx.replyWithHTML(
                     `Оценка рублевых активов: ${state.rub.toFixed(2)} руб.,\n` +
                     `Оценка долларовых активов: ${state.usd.toFixed(2)} $,\n` +
-                    `Рубли в кэше: ${state.rub_cur.toFixed(2)} руб.,\n` +
+                    `Рубли в кэше: ${state.rub_cur} руб.,\n` +
                     `Стоимость доллара ${state.currentUSD.toFixed(2)} $,\n` +
                     `Итого оценка в рублях ${state.totalRUB.toFixed(2)} руб.,\n` +
                     `Итого оценка в долларах ${state.totalUSD.toFixed(2)} $`)

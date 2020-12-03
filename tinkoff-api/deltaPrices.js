@@ -157,6 +157,7 @@ const portfolioDelta = async () => {
 
 const portfolioState = async () => {
     const sum = {
+        rub_cur: 0, //рубли в кэше
         rub: 0,
         usd: 0,
         currentUSD: 0,
@@ -164,7 +165,7 @@ const portfolioState = async () => {
         totalUSD: 0
     }
     const [figis, tickers, quantities] = await currentFIGIs();
-
+    sum.rub_cur = await api.portfolioCurrencies();
     for (let iter = 0; iter < tickers.length; iter++) {
         const ticker = tickers[iter];
         const instrument = await api.searchOne({
@@ -172,13 +173,13 @@ const portfolioState = async () => {
         })
         const currentPrice = await currentPriceGetter(instrument.figi)
         const quantity = quantities[iter]
-        // console.log(currentPrice)
-        // console.log(instrument.currency)
         instrument.currency === 'RUB' ? sum.rub = sum.rub + currentPrice * quantity : sum.usd = sum.usd + currentPrice * quantity
     }
-    sum.currentUSD = await currentPriceGetter(FIGIUSD)
-    sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD)
-    sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd
+    
+    sum.rub += sum.rub_cur.currencies[0].balance;
+    sum.currentUSD = await currentPriceGetter(FIGIUSD);
+    sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD);
+    sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd;
 
     // console.log(sum) 
     return sum

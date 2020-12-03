@@ -38,11 +38,12 @@ const telegramBot = () => {
                 ctx.replyWithHTML('Выполняется запрос состояния портфеля. Обработка может занять несколько минут. ');
                 const state = await deltaPrices.portfolioState();
                 ctx.replyWithHTML(
-                    `Оценка рублевых активов: ${state.rub.toFixed(2)},\n` +
-                    `Оценка долларовых активов: ${state.usd.toFixed(2)},\n` +
-                    `Стоимость доллара ${state.currentUSD.toFixed(2)},\n` +
-                    `Итого оценка в рублях ${state.totalRUB.toFixed(2)},\n` +
-                    `Итого оценка в долларах ${state.totalUSD.toFixed(2)}`)
+                    `Оценка рублевых активов: ${state.rub.toFixed(2)} руб.,\n` +
+                    `Оценка долларовых активов: ${state.usd.toFixed(2)} $,\n` +
+                    `Рубли в кэше: ${state.rub_cur.toFixed(2)} руб.,\n` +
+                    `Стоимость доллара ${state.currentUSD.toFixed(2)} $,\n` +
+                    `Итого оценка в рублях ${state.totalRUB.toFixed(2)} руб.,\n` +
+                    `Итого оценка в долларах ${state.totalUSD.toFixed(2)} $`)
 
             } catch (err) {
                 console.log(err);

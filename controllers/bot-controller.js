@@ -1,4 +1,4 @@
-const deltaPrices = require('../tinkoff-api/deltaPrices')
+const deltaPrices = require('../tinkoff-api/deltaPrices');
 
 const {
     Telegraf
@@ -23,19 +23,19 @@ const telegramBot = () => {
                         `Цена текущая: ${deltaPrice[i].currentPrice}\n` +
                         `Время запроса: ${deltaPrice[i].time} \n` +
                         `Изменение цены с начала торгов: ${typeof deltaPrice[i].delta == 'number' ? deltaPrice[i].delta.toFixed(3) + ' ' + deltaPrice[i].currency : 'Нет данных' } 
-                `)
+                `);
                 }
             } catch (err) {
                 console.log(err)
-                ctx.reply('Что-то не так')
+                ctx.reply('Что-то не так');
             }
-        } else ctx.reply('Ты не Денис')
-    })
+        } else ctx.reply('Ты не Денис');
+    });
 
     bot.command('portfolioState', async (ctx) => {
         if (ctx.from.id === 275498236) {
             try {
-                ctx.replyWithHTML('Выполняется запрос состояния портфеля. Обработка может занять несколько минут. ')
+                ctx.replyWithHTML('Выполняется запрос состояния портфеля. Обработка может занять несколько минут. ');
                 const state = await deltaPrices.portfolioState();
                 ctx.replyWithHTML(
                     `Оценка рублевых активов: ${state.rub.toFixed(2)},\n` +
@@ -45,16 +45,16 @@ const telegramBot = () => {
                     `Итого оценка в долларах ${state.totalUSD.toFixed(2)}`)
 
             } catch (err) {
-                console.log(err)
-                ctx.reply('Что-то не так')
+                console.log(err);
+                ctx.reply('Что-то не так');
             }
         } else {
-            ctx.reply('Ты не Денис')
+            ctx.reply('Ты не Денис');
         }
     })
 
-    bot.hears('hi', (ctx) => ctx.reply('Hey there')) // bot.hears это обработчик конкретного текста, данном случае это - "hi"
-    bot.launch() // запуск бота
+    bot.hears('hi', (ctx) => ctx.reply('Hey there')); // bot.hears это обработчик конкретного текста, данном случае это - "hi"
+    bot.launch(); // запуск бота
 }
 
 exports.telegramBot = telegramBot;

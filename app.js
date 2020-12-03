@@ -1,3 +1,6 @@
+const WAIT_INTERVAL = 9000//1680000 // 28 minutes
+const TIMEOUT = 27005//28800000 //8 hours
+let interval = 0;
 
 const port = process.env.PORT || 5000;
 const express = require("express");
@@ -46,6 +49,7 @@ const test = async () => {
 
 app.use("/tinkoffapi/portfolio/", apiRoutes);
 
+
 app.use((req, res, next) => {
 	console.log("ошибка");
 });
@@ -55,8 +59,24 @@ app.use((error, req, res, next) => {
 });
 
 
-//test();
-//deltaMorningCurrentPrice()
+
+const axios = require('axios');
+
+const wakeUp = async () => {
+    try{
+        await axios.get('http://localhost:5000/tinkoffapi/portfolio/')
+    } catch (err){
+        console.log(err)
+    }
+};
+const timeFinish = () => {
+    clearInterval(interval);
+    console.log('go to sleep');
+}
+
+interval = setInterval(wakeUp, WAIT_INTERVAL);
+setTimeout(timeFinish, TIMEOUT);
+
 telegramBot.telegramBot()
 
 

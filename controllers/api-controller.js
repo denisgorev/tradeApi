@@ -1,4 +1,9 @@
-const deltaPrices = require('../tinkoff-api/deltaPrices')
+const deltaPrices = require('../tinkoff-api/deltaPrices');
+
+const wakeUpApi = async (req, res) => {
+    res.status('200').send('Success 1');
+    console.log('wakeup')
+};
 
 const deltaMorningCurrentPriceApi = async (req, res, next) => {
         let deltaPrice = 0;
@@ -37,8 +42,11 @@ const portfolioStateApi = async (req, res, next) => {
         state: portfolioState
     })
 }
+
+
     exports.portfolioStateApi = portfolioStateApi;
     exports.deltaMorningCurrentPriceApi = deltaMorningCurrentPriceApi;
     exports.deltaPortfolioCostApi = deltaPortfolioCostApi;
+    exports.wakeUpApi = wakeUpApi;
 
    

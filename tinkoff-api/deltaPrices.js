@@ -173,15 +173,20 @@ const portfolioState = async () => {
             ticker
         })
         const currentPrice = await currentPriceGetter(instrument.figi)
-        const quantity = quantities[iter]
-        instrument.currency === 'RUB' ? sum.rub = sum.rub + currentPrice * quantity : sum.usd = sum.usd + currentPrice * quantity
+        const quantity = quantities[iter];
+        if (instrument.currency === 'RUB' && instrument.figi!=='BBG0013HGFT4') {
+            sum.rub = sum.rub + currentPrice * quantity 
+        } 
+        if (instrument.currency !== 'RUB') {
+            sum.usd = sum.usd + currentPrice * quantity
+        } 
     }
     sum.rub_cur = getCurrency.currencies[0].balance;
     sum.usd_cur = getCurrency.currencies[1].balance;
     sum.rub += sum.rub_cur;
     sum.currentUSD = await currentPriceGetter(FIGIUSD);
-    sum.totalRUB = sum.rub + sum.usd * await currentPriceGetter(FIGIUSD);
-    sum.totalUSD = sum.rub / await currentPriceGetter(FIGIUSD) + sum.usd;
+    sum.totalRUB = sum.rub + (sum.usd + sum.usd_cur) * await currentPriceGetter(FIGIUSD) ;
+    sum.totalUSD = sum.totalRUB / await currentPriceGetter(FIGIUSD);
 
     // console.log(sum) 
     return sum

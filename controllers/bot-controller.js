@@ -5,6 +5,7 @@ const {
 } = require('telegraf');
 
 const telegramBot = () => {
+    console.log('start bot')
     const bot = new Telegraf(process.env.BOT_TOKEN) //сюда помещается токен, который дал botFather
     // bot.start((ctx) => ctx.reply(ctx.from))
     bot.start((ctx) => ctx.reply(`Привет, ${ctx.from.first_name}! Получи информацию по своему брокерскому счету. Для получения списка возможных операций внапиши /help`)) //ответ бота на команду /start

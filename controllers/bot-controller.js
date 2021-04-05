@@ -1,4 +1,5 @@
 const deltaPrices = require('../tinkoff-api/deltaPrices');
+const mosStockEx = require ('../tinkoff-api/mosStockEx');
 
 const {
     Telegraf
@@ -47,6 +48,21 @@ const telegramBot = () => {
                     `Итого оценка в рублях ${state.totalRUB.toFixed(2)} руб.,\n` +
                     `Итого оценка в долларах ${state.totalUSD.toFixed(2)} $`)
 
+            } catch (err) {
+                console.log(err);
+                ctx.reply('Что-то не так');
+            }
+        } else {
+            ctx.reply('Ты не Денис');
+        }
+    })
+
+    bot.command('moexstat', async (ctx) => {
+        if (ctx.from.id === 275498236) {
+            try {
+                ctx.reply('Выполняется запрос оценки портфеля на Мосбирже')
+                const state = await mosStockEx.getStockData();
+                ctx.replyWithHTML('Оценка портфеля на Мосбирже: ', state)
             } catch (err) {
                 console.log(err);
                 ctx.reply('Что-то не так');

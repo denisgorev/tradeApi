@@ -1,8 +1,9 @@
 const WAIT_INTERVAL = 1680000 // 28 minutes
 const TIMEOUT = 28800000 //8 hours
 let interval = 0;
+const mongoose = require('mongoose');
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const express = require("express");
 const app = express();
 require('dotenv').config();
@@ -36,7 +37,7 @@ const test = async () => {
             "figi": "BBG000C0LW92",
             "balance": 20
         })
-        
+
         //console.log(await api.accounts())
         //console.log(await api.portfolio())
         //console.log(await api.stocks())
@@ -51,11 +52,11 @@ app.use("/tinkoffapi/portfolio/", apiRoutes);
 
 
 app.use((req, res, next) => {
-	console.log("ошибка");
+    console.log("ошибка");
 });
 
 app.use((error, req, res, next) => {
-	console.log(error);
+    console.log(error);
 });
 
 
@@ -63,9 +64,9 @@ app.use((error, req, res, next) => {
 const axios = require('axios');
 
 const wakeUp = async () => {
-    try{
+    try {
         await axios.get('https://still-bayou-49406.herokuapp.com/tinkoffapi/portfolio/')
-    } catch (err){
+    } catch (err) {
         console.log(err)
     }
 };
@@ -80,4 +81,17 @@ setTimeout(timeFinish, TIMEOUT);
 telegramBot.telegramBot()
 
 
-app.listen(port, () => console.log("Server is started"));
+
+// app.listen(port, () => console.log("Server is started"));
+mongoose
+    .connect('mongodb+srv://admin:admin@cluster0.aozvt.mongodb.net/StockEx?retryWrites=true&w=majority', {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    })
+    .then(() => {
+        app.listen(port, () => console.log("Server is started"));
+    })
+    .catch(err => {
+        console.log(err);
+    });

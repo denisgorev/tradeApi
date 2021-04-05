@@ -1,5 +1,5 @@
 const OpenAPI = require('@tinkoff/invest-openapi-js-sdk');
-const moment = require('moment')
+const moment = require('moment');
 const apiURL = 'https://api-invest.tinkoff.ru/openapi/';
 const socketURL = 'wss://api-invest.tinkoff.ru/openapi/md/v1/md-openapi/ws';
 const secretToken = process.env.TOKEN; // токен для сандбокса

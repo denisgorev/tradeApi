@@ -1,4 +1,5 @@
 const deltaPrices = require('../tinkoff-api/deltaPrices');
+const mosStockEx = require('../tinkoff-api/mosStockEx');
 
 const wakeUpApi = async (req, res) => {
     res.status('200').send('Success 1');
@@ -6,16 +7,16 @@ const wakeUpApi = async (req, res) => {
 };
 
 const deltaMorningCurrentPriceApi = async (req, res, next) => {
-        let deltaPrice = 0;
-        try {
-            deltaPrice = await deltaPrices.deltaMorningCurrentPrice();
-        } catch (err) {
-            console.log(err)
-        }
-        res.json({
-            prices: deltaPrice
-        })
+    let deltaPrice = 0;
+    try {
+        deltaPrice = await deltaPrices.deltaMorningCurrentPrice();
+    } catch (err) {
+        console.log(err)
     }
+    res.json({
+        prices: deltaPrice
+    })
+}
 
 const deltaPortfolioCostApi = async (req, res, next) => {
     let deltaPortfolioCost = 0;
@@ -43,10 +44,24 @@ const portfolioStateApi = async (req, res, next) => {
     })
 }
 
+const getStockData = async (req, res, next) => {
+    let stockData;
+    try {
+        stockData = await mosStockEx.getStockData();
+    }
+    catch (err) {
+        console.log(err)
+        return next(err)
+    }
+    res.json({
+        state: stockData
+    })
+}
 
-    exports.portfolioStateApi = portfolioStateApi;
-    exports.deltaMorningCurrentPriceApi = deltaMorningCurrentPriceApi;
-    exports.deltaPortfolioCostApi = deltaPortfolioCostApi;
-    exports.wakeUpApi = wakeUpApi;
 
-   
+exports.portfolioStateApi = portfolioStateApi;
+exports.deltaMorningCurrentPriceApi = deltaMorningCurrentPriceApi;
+exports.deltaPortfolioCostApi = deltaPortfolioCostApi;
+exports.wakeUpApi = wakeUpApi;
+exports.getStockData = getStockData;
+

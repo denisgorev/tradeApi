@@ -84,7 +84,7 @@ telegramBot.telegramBot()
 
 // app.listen(port, () => console.log("Server is started"));
 mongoose
-    .connect('mongodb+srv://admin:admin@cluster0.aozvt.mongodb.net/StockEx?retryWrites=true&w=majority', {
+    .connect(process.env.MONGO_CRED, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true

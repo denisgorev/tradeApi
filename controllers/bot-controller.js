@@ -62,7 +62,8 @@ const telegramBot = () => {
             try {
                 ctx.reply('Выполняется запрос оценки портфеля на Мосбирже')
                 const state = await mosStockEx.getStockData();
-                ctx.replyWithHTML('Оценка портфеля на Мосбирже: ', state)
+                console.log(state)
+                ctx.replyWithHTML(`Оценка портфеля на Мосбирже: ${state.toFixed(2)} рублей`)
             } catch (err) {
                 console.log(err);
                 ctx.reply('Что-то не так');

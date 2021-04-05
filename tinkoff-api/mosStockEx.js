@@ -50,7 +50,7 @@ const test = async () => {
     try {
         console.log('call mongo');
         securitiesMongo = await Share.find({}); //цб в наличии из Монги
-        console.log(securitiesMongo);
+        // console.log(securitiesMongo);
     } catch (err) {
         console.log(err);
     }
@@ -62,10 +62,10 @@ const getStockData = async () => {
 
     for (let i in securitiesMongo) {
         let date = getCurrentDate();
-
+        console.log(i)
         securityType = securitiesMongo[i].type;
         securityCurrency = securitiesMongo[i].currency;
-        if (securityType === 'share') {
+        if (securityType === 'stock') {
             security = securitiesMongo[i].name;
             URL = `https://iss.moex.com/iss/engines/stock/markets/shares/securities/${security}/candles.json?from=${date}`;
             response = await fetch(URL);
@@ -75,7 +75,7 @@ const getStockData = async () => {
                 let securitiesInfo = json.candles.data;
                 let securitiesPrice = securitiesInfo[securitiesInfo.length - 1][1];
                 sum = sum + securitiesPrice * securitiesMongo[i].quantity;
-                console.log(securitiesPrice)
+                console.log(sum, security);
             } else {
                 console.log("Ошибка HTTP: " + response.status);
             }
@@ -85,6 +85,7 @@ const getStockData = async () => {
             let bondInfo = 'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities.json?iss.meta=off&iss.only=securities';
             bondPrice = await getBondPrice(i, URL, bondInfo);
             sum = sum + bondPrice;
+            console.log(sum, security);
             
         } else if (securityType === 'bond' && securityCurrency === 'USD') {
             security = securitiesMongo[i].isin;
@@ -95,6 +96,7 @@ const getStockData = async () => {
             let exchRubUsd = await exchRub.json();
             exchRubUsd = exchRubUsd.securities.data[13][3];
             sum = sum + bondPrice * exchRubUsd;
+            console.log(sum, security);
         }
 
 

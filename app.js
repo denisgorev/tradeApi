@@ -3,7 +3,7 @@ const TIMEOUT = 28800000 //8 hours
 let interval = 0;
 const mongoose = require('mongoose');
 
-const port = process.env.PORT || 5001;
+const port = process.env.PORT || 5000;
 const express = require("express");
 const app = express();
 require('dotenv').config();

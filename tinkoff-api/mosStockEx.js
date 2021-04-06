@@ -1,7 +1,6 @@
 const fetch = require('node-fetch');
 let security;
 let currentDate;
-let sum = 0;
 const Share = require('../models/share');
 let securitiesMongo = [];
 let securityType;
@@ -14,13 +13,13 @@ let URL;
 const getExchangeUSD = async (date) => {
     let exchRub = await fetch('https://iss.moex.com/iss/engines/currency/markets/selt/securities/USD000000TOD.json?iss.meta=off')
     let exchRubUsd = await exchRub.json();
-    if (exchRubUsd.marketdata.data[0][13] === undefined) {
+    if (exchRubUsd.marketdata.data[0][8] === undefined) {
         let exchRub = await fetch(`https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities.json?from=${date}`);
         let exchRubUsd = await exchRub.json();
-        console.log(exchRubUsd.securities.data[13][3])
+        console.log(exchRubUsd.securities.data[13][3]);
         return exchRubUsd.securities.data[13][3];
     } else {
-        return exchRubUsd.marketdata.data[0][13]
+        return exchRubUsd.marketdata.data[0][8]
     }
 }
 
@@ -86,12 +85,22 @@ const test = async () => {
     }
 }
 const getStockData = async () => {
-    sum = 0;
+    let date = getCurrentDate();
+    let sum = {
+        rub_cur: 0, //рубли в кэше
+        usd_cur: 0,
+        rub: 0,
+        usd: 0,
+        currentUSD: 0,
+        totalRUB: 0,
+        totalUSD: 0
+    };
+    sum.currentUSD = await getExchangeUSD(date);
     await test();
     let response;
 
     for (let i in securitiesMongo) {
-        let date = getCurrentDate();
+        
         securityType = securitiesMongo[i].type;
         securityCurrency = securitiesMongo[i].currency;
         if (securityType === 'stock') {
@@ -111,8 +120,8 @@ const getStockData = async () => {
                     securitiesInfo = json.candles.data;
                 }
                 let securitiesPrice = securitiesInfo[securitiesInfo.length - 1][1];
-                sum = sum + securitiesPrice * securitiesMongo[i].quantity;
-                console.log(sum, security, securitiesPrice * securitiesMongo[i].quantity);
+                sum.rub = sum.rub + securitiesPrice * securitiesMongo[i].quantity;
+                sum.totalRUB = sum.totalRUB + securitiesPrice * securitiesMongo[i].quantity;
             } else {
                 console.log("Ошибка HTTP: " + response.status);
             }
@@ -121,28 +130,26 @@ const getStockData = async () => {
             URL = `https://iss.moex.com/iss/engines/stock/markets/bonds/securities/${security}/candles.json?from=${date}`;
             let bondInfo = 'https://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQCB/securities.json?iss.meta=off&iss.only=securities';
             bondPrice = await getBondPrice(i, URL, bondInfo, securityCurrency);
-            sum = sum + bondPrice;
-            console.log(sum, security, bondPrice);
-
+            sum.rub = sum.rub + bondPrice;
+            sum.totalRUB = sum.totalRUB + bondPrice;
         } else if (securityType === 'bond' && securityCurrency === 'USD') {
             security = securitiesMongo[i].isin;
             URL = `https://iss.moex.com/iss/engines/stock/markets/bonds/securities/${security}/candles.json?from=${date}`;
             let bondInfo = 'http://iss.moex.com/iss/engines/stock/markets/bonds/boards/TQOD/securities.json?iss.meta=off';
             bondPrice = await getBondPrice(i, URL, bondInfo, securityCurrency);
-
-            exchRubUsd = await getExchangeUSD(date);
-            sum = sum + bondPrice * exchRubUsd;
-            console.log(sum, bondPrice * exchRubUsd, security);
+            sum.usd = sum.usd + bondPrice;
+            sum.totalRUB = sum.totalRUB + bondPrice * sum.currentUSD;
         } else if (securityType === 'cash' && securityCurrency === 'USD') {
-            exchRubUsd = await getExchangeUSD(date);
-            sum = sum + securitiesMongo[i].quantity * exchRubUsd
-            console.log(sum, securitiesMongo[i].quantity * exchRubUsd, security);
+            sum.usd_cur = sum.usd_cur + securitiesMongo[i].quantity;
+            sum.totalRUB = sum.totalRUB + securitiesMongo[i].quantity * sum.currentUSD
         } else if (securityType === 'cash' && securityCurrency === 'RUB') {
-            sum = sum + securitiesMongo[i].quantity
-
+            sum.rub_cur = sum.rub_cur + securitiesMongo[i].quantity;
+            sum.totalRUB = sum.totalRUB + securitiesMongo[i].quantity;
         }
 
     }
+    sum.totalUSD = sum.totalRUB/sum.currentUSD;
+    console.log(sum)
     return sum;
 
 }

@@ -12,9 +12,16 @@ let URL;
 
 
 const getExchangeUSD = async (date) => {
-    let exchRub = await fetch(`https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities.json?from=${date}`);
+    let exchRub = await fetch('https://iss.moex.com/iss/engines/currency/markets/selt/securities/USD000000TOD.json?iss.meta=off')
     let exchRubUsd = await exchRub.json();
-    return exchRubUsd.securities.data[13][3];
+    if (exchRubUsd.marketdata.data[0][13] === undefined) {
+        let exchRub = await fetch(`https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities.json?from=${date}`);
+        let exchRubUsd = await exchRub.json();
+        console.log(exchRubUsd.securities.data[13][3])
+        return exchRubUsd.securities.data[13][3];
+    } else {
+        return exchRubUsd.marketdata.data[0][13]
+    }
 }
 
 const getBondPrice = async (index, URL, bondInfo) => {
@@ -36,14 +43,14 @@ const getBondPrice = async (index, URL, bondInfo) => {
         }
         bondPrice = await bondCandle.json();
         bondPrice = bondPrice.candles.data;
-        
+
         if (bondPrice = []) {
             date = getCurrentDate(1);
             URL = `https://iss.moex.com/iss/engines/stock/markets/bonds/securities/${security}/candles.json?from=${date}`;
             response = await fetch(URL);
             bondPrice = await response.json();
             bondPrice = bondPrice.candles.data;
-        } 
+        }
 
         bondPrice = bondPrice[bondPrice.length - 1][1] / 100;
         bondPrice = bondPrice * bondValuePrice * securitiesMongo[index].quantity + couponValue * securitiesMongo[index].quantity;
@@ -53,17 +60,17 @@ const getBondPrice = async (index, URL, bondInfo) => {
     }
 }
 
-const getCurrentDate = (y=0) => {
+const getCurrentDate = (y = 0) => {
     let date = new Date();
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
     let currentDate = date.getDate();
     let dow = date.getDay(); //день недели
-    if (y===1) {
-        currentDate = date.getDate()-1;
-    } 
+    if (y === 1) {
+        currentDate = date.getDate() - 1;
+    }
     if (dow === 0) { //если воскресенье
-        currentDate = date.getDate()-2;
+        currentDate = date.getDate() - 2;
     }
     date = year + '-' + month + '-' + currentDate;
     return date;

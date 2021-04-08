@@ -149,6 +149,7 @@ const getStockData = async () => {
 
     }
     sum.totalUSD = sum.totalRUB/sum.currentUSD;
+    console.l
     console.log(sum)
     return sum;
 

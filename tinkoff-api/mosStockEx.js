@@ -110,7 +110,6 @@ const getStockData = async () => {
             if (response.ok) { // если HTTP-статус в диапазоне 200-299
                 // получаем тело ответа
                 let json = await response.json();
-
                 let securitiesInfo = json.candles.data;
                 if (securitiesInfo = []) {
                     date = getCurrentDate(1);

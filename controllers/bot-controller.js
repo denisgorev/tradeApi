@@ -143,11 +143,11 @@ const telegramBot = () => {
         async ctx => {
             ctx.wizard.state.data.currency = ctx.message.text;
             try {
-                console.log(ctx.wizard.state.data)
+                // console.log(ctx.wizard.state.data)
                 share = await Share.find({ isin: ctx.wizard.state.data.isin });
-                console.log(share)
-                if (share.length !== 0) {
-                    console.log('updating')
+                console.log(share);
+                if (share.length !== 0 && ctx.wizard.state.data.quantity !== '0') {
+                    console.log(ctx.wizard.state.data.quantity)
 
                     try {
                         await Share.findOneAndUpdate({ isin: ctx.wizard.state.data.isin },
@@ -158,11 +158,12 @@ const telegramBot = () => {
                                 quantity: ctx.wizard.state.data.quantity,
                                 currency: ctx.wizard.state.data.currency
                             });
+                        ctx.reply('Информация по ценной бумаге успешно обновлена!')
                     } catch (err) {
                         console.log(err)
                     }
 
-                } else {
+                } else if (share.length === 0) {
                     let secure = new Share({
                         name: ctx.wizard.state.data.ticker,
                         isin: ctx.wizard.state.data.isin,
@@ -171,10 +172,19 @@ const telegramBot = () => {
                         currency: ctx.wizard.state.data.currency
                     })
                     try {
-                        await secure.save()
+                        await secure.save();
+                        ctx.reply('Информация по ценной бумаге успешно заведена!');
                     } catch (err) {
                         console.log(err)
                     }
+                } else if (share.length !== 0 && ctx.wizard.state.data.quantity === '0') {
+                    try {
+                        await Share.deleteOne({ isin: ctx.wizard.state.data.isin })
+                        ctx.reply('Информация по ценной бумаге успешно удалена!');
+                    } catch (err) {
+                        console.log(err)
+                    }
+                    a
                 }
                 return ctx.scene.leave();
             } catch {

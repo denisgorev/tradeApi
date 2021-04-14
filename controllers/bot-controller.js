@@ -1,8 +1,10 @@
 const deltaPrices = require('../tinkoff-api/deltaPrices');
 const mosStockEx = require('../tinkoff-api/mosStockEx');
-
+const session = require('telegraf/session');
+const Share = require('../models/share');
+const WizardScene = require('telegraf/scenes/wizard');
 const {
-    Telegraf
+    Telegraf, Stage
 } = require('telegraf');
 
 const telegramBot = () => {
@@ -11,11 +13,11 @@ const telegramBot = () => {
     // bot.start((ctx) => ctx.reply(ctx.from))
     bot.start((ctx) => ctx.replyWithHTML(`Привет, ${ctx.from.first_name}! Получи информацию по своему брокерскому счету. Для получения списка возможных операций внапиши /help`)) //ответ бота на команду /start
     bot.help((ctx) => ctx.replyWithHTML(`Я умею выполнять команды /deltaPrice, /portfolioState, /moexstat, /total. \n` +
-    `/deltaPrice показывает изменение в стоимости 1 единицы актива по портфелю с начала торгов. по Санкт-Петербургской бирже; \n` +
-    `/portfolioState показывает текущее состояние портфля по Санкт-Петербургской бирже; \n` +
-    `/moex показывает текущее состояние портфеля по Московской бирже; \n` +
-    `/total показывает состояние по обоим портфелям`)) //ответ бота на команду /help
-    bot.on('sticker', (ctx) => ctx.reply('')) //bot.on это обработчик введенного юзером сообщения, в данном случае он отслеживает стикер, можно использовать обработчик текста или голосового сообщения
+        `/deltaPrice показывает изменение в стоимости 1 единицы актива по портфелю с начала торгов. по Санкт-Петербургской бирже; \n` +
+        `/portfolioState показывает текущее состояние портфля по Санкт-Петербургской бирже; \n` +
+        `/moex показывает текущее состояние портфеля по Московской бирже; \n` +
+        `/total показывает состояние по обоим портфелям`)) //ответ бота на команду /help
+    // bot.on('text', (ctx) => console.log(ctx)) //bot.on это обработчик введенного юзером сообщения, в данном случае он отслеживает стикер, можно использовать обработчик текста или голосового сообщения
     bot.command('deltaPrice', async (ctx) => {
         if (ctx.from.id === 275498236) {
             try {
@@ -110,6 +112,84 @@ const telegramBot = () => {
     })
 
 
+    const superWizard = new WizardScene(
+        'change',
+        ctx => {
+            ctx.reply("Введите тикер");
+            ctx.wizard.state.data = {};
+            return ctx.wizard.next();
+        },
+        ctx => {
+            ctx.reply("Введите isin");
+            ctx.wizard.state.data.ticker = ctx.message.text;
+            return ctx.wizard.next();
+        },
+        ctx => {
+            ctx.reply("Тип (stock, bond)");
+            ctx.wizard.state.data.isin = ctx.message.text;
+            return ctx.wizard.next();
+        },
+        ctx => {
+            ctx.reply(`Введите количество`);
+            ctx.wizard.state.data.type = ctx.message.text;
+            return ctx.wizard.next();
+            // return ctx.scene.leave();
+        },
+        ctx => {
+            ctx.reply('Введите валюту');
+            ctx.wizard.state.data.quantity = ctx.message.text;
+            return ctx.wizard.next();
+        },
+        async ctx => {
+            ctx.wizard.state.data.currency = ctx.message.text;
+            try {
+                console.log(ctx.wizard.state.data)
+                share = await Share.find({ isin: ctx.wizard.state.data.isin });
+                console.log(share)
+                if (share.length !== 0) {
+                    console.log('updating')
+
+                    try {
+                        await Share.findOneAndUpdate({ isin: ctx.wizard.state.data.isin },
+                            {
+                                name: ctx.wizard.state.data.ticker,
+                                isin: ctx.wizard.state.data.isin,
+                                type: ctx.wizard.state.data.type,
+                                quantity: ctx.wizard.state.data.quantity,
+                                currency: ctx.wizard.state.data.currency
+                            });
+                    } catch (err) {
+                        console.log(err)
+                    }
+
+                } else {
+                    let secure = new Share({
+                        name: ctx.wizard.state.data.ticker,
+                        isin: ctx.wizard.state.data.isin,
+                        type: ctx.wizard.state.data.type,
+                        quantity: ctx.wizard.state.data.quantity,
+                        currency: ctx.wizard.state.data.currency
+                    })
+                    try {
+                        await secure.save()
+                    } catch (err) {
+                        console.log(err)
+                    }
+                }
+                return ctx.scene.leave();
+            } catch {
+                console.log('что-то не так');
+            }
+        }
+
+    );
+    const stage = new Stage([superWizard]);
+
+    bot.use(session());
+    bot.use(stage.middleware());
+    bot.command('change', ctx => {
+        ctx.scene.enter('change');
+    });
 
     bot.hears('hi', (ctx) => ctx.reply('Hey there')); // bot.hears это обработчик конкретного текста, данном случае это - "hi"
     bot.launch(); // запуск бота

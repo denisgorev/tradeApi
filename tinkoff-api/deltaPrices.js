@@ -1,5 +1,5 @@
 const OpenAPI = require('@tinkoff/invest-openapi-js-sdk');
-const moment = require('moment')
+const moment = require('moment');
 const apiURL = 'https://api-invest.tinkoff.ru/openapi/';
 const socketURL = 'wss://api-invest.tinkoff.ru/openapi/md/v1/md-openapi/ws';
 const secretToken = process.env.TOKEN; // токен для сандбокса
@@ -167,6 +167,9 @@ const portfolioState = async () => {
     }
     const [figis, tickers, quantities] = await currentFIGIs();
     const getCurrency = await api.portfolioCurrencies();
+    console.log(getCurrency)
+    
+
     for (let iter = 0; iter < tickers.length; iter++) {
         const ticker = tickers[iter];
         const instrument = await api.searchOne({
@@ -174,6 +177,7 @@ const portfolioState = async () => {
         })
         const currentPrice = await currentPriceGetter(instrument.figi)
         const quantity = quantities[iter];
+        
         if (instrument.currency === 'RUB' && instrument.figi!=='BBG0013HGFT4') {
             sum.rub = sum.rub + currentPrice * quantity; 
 

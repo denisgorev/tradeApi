@@ -2,6 +2,7 @@ const deltaPrices = require("../tinkoff-api/deltaPrices");
 const mosStockEx = require("../tinkoff-api/mosStockEx");
 const session = require("telegraf/session");
 const Share = require("../models/share");
+
 // const stageCall = require('./bot-stage');
 const WizardScene = require("telegraf/scenes/wizard");
 const { Telegraf, Stage } = require("telegraf");
@@ -26,7 +27,7 @@ const telegramBot = () => {
   ); //ответ бота на команду /help
   // bot.on('text', (ctx) => console.log(ctx)) //bot.on это обработчик введенного юзером сообщения, в данном случае он отслеживает стикер, можно использовать обработчик текста или голосового сообщения
   bot.command("deltaPrice", async (ctx) => {
-    if (ctx.from.id === 275498236) {
+    if (ctx.from.id === parseInt(process.env.TELEGRAM_ID)) {
       try {
         ctx.reply(
           "Выполняется запрос изменения цены единицы актива в портфеле. Обработка может занять несколько минут. "
@@ -57,7 +58,7 @@ const telegramBot = () => {
   });
 
   bot.command("portfolioState", async (ctx) => {
-    if (ctx.from.id === 275498236) {
+    if (ctx.from.id === parseInt(process.env.TELEGRAM_ID)) {
       try {
         ctx.replyWithHTML(
           "Выполняется запрос состояния портфеля. Обработка может занять несколько минут. "
@@ -82,7 +83,7 @@ const telegramBot = () => {
   });
 
   bot.command("moexstat", async (ctx) => {
-    if (ctx.from.id === 275498236) {
+    if (ctx.from.id === parseInt(process.env.TELEGRAM_ID)) {
       try {
         ctx.reply("Выполняется запрос оценки портфеля на Мосбирже");
         const state = await mosStockEx.getStockData();
@@ -106,7 +107,8 @@ const telegramBot = () => {
   });
 
   bot.command("total", async (ctx) => {
-    if (ctx.from.id === process.env.TELEGRAM_ID) {
+    
+    if (ctx.from.id === parseInt(process.env.TELEGRAM_ID)) {
       try {
         ctx.reply(
           "Выполняется запрос в портфели. Это может занять несколько минут"

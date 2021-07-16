@@ -106,7 +106,7 @@ const telegramBot = () => {
   });
 
   bot.command("total", async (ctx) => {
-    if (ctx.from.id === 275498236) {
+    if (ctx.from.id === process.env.TELEGRAM_ID) {
       try {
         ctx.reply(
           "Выполняется запрос в портфели. Это может занять несколько минут"

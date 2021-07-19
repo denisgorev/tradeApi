@@ -2,6 +2,7 @@ const deltaPrices = require("../tinkoff-api/deltaPrices");
 const mosStockEx = require("../tinkoff-api/mosStockEx");
 const session = require("telegraf/session");
 const Share = require("../models/share");
+const axios = require('axios');
 
 // const stageCall = require('./bot-stage');
 const WizardScene = require("telegraf/scenes/wizard");
@@ -107,8 +108,19 @@ const telegramBot = () => {
   });
 
   bot.command("total", async (ctx) => {
+
+
+  const wakeUp = async () => {
+      try {
+          await axios.get('https://still-bayou-49406.herokuapp.com/tinkoffapi/portfolio/');
+          console.log('wake up')
+      } catch (err) {
+          console.log(err)
+      }
+  };
     
     if (ctx.from.id === parseInt(process.env.TELEGRAM_ID)) {
+      wakeUp();
       try {
         ctx.reply(
           "Выполняется запрос в портфели. Это может занять несколько минут"

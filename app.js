@@ -61,22 +61,22 @@ app.use((error, req, res, next) => {
 
 
 
-const axios = require('axios');
+// const axios = require('axios');
 
-const wakeUp = async () => {
-    try {
-        await axios.get('https://still-bayou-49406.herokuapp.com/tinkoffapi/portfolio/')
-    } catch (err) {
-        console.log(err)
-    }
-};
-const timeFinish = () => {
-    clearInterval(interval);
-    console.log('go to sleep');
-}
+// const wakeUp = async () => {
+//     try {
+//         await axios.get('https://still-bayou-49406.herokuapp.com/tinkoffapi/portfolio/')
+//     } catch (err) {
+//         console.log(err)
+//     }
+// };
+// const timeFinish = () => {
+//     clearInterval(interval);
+//     console.log('go to sleep');
+// }
 
-interval = setInterval(wakeUp, WAIT_INTERVAL);
-setTimeout(timeFinish, TIMEOUT);
+// interval = setInterval(wakeUp, WAIT_INTERVAL);
+// setTimeout(timeFinish, TIMEOUT);
 
 telegramBot.telegramBot()
 

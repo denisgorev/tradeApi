@@ -19,12 +19,14 @@ const getExchangeUSD = async (date) => {
       `https://iss.moex.com/iss/statistics/engines/futures/markets/indicativerates/securities.json?from=${date}`
     );
     let exchRubUsd = await exchRub.json();
-    console.log(exchRubUsd.securities.data[13][3]);
+    // console.log(exchRubUsd.securities.data[13][3]);
     return exchRubUsd.securities.data[13][3];
   } else {
     return exchRubUsd.marketdata.data[0][8];
   }
 };
+
+
 
 const getBondPrice = async (index, URL, bondInfo) => {
   let bondCandle = await fetch(URL);
@@ -45,14 +47,26 @@ const getBondPrice = async (index, URL, bondInfo) => {
     bondPrice = await bondCandle.json();
     bondPrice = bondPrice.candles.data;
 
-    if (bondPrice.length === 0) {
-      date = getCurrentDate(1);
+    const bondQuery = async (security, date) => {
       URL = `https://iss.moex.com/iss/engines/stock/markets/bonds/securities/${security}/candles.json?from=${date}`;
       response = await fetch(URL);
       bondPrice = await response.json();
-      bondPrice = bondPrice.candles.data;
+      return bondPrice.candles.data;
     }
-    console.log(bondPrice);
+
+    if (bondPrice.length === 0) {
+      date = getCurrentDate(1);
+      
+      bondPrice =  bondQuery(security, date);
+      if (bondPrice.length === 0) {
+        date = getCurrentDate(2);
+
+        bondPrice = bondQuery(security, date);
+    }
+    }
+
+    console.log(bondPrice.length, 'length')
+    
     bondPrice = bondPrice[bondPrice.length - 1][1] / 100;
     bondPrice =
       bondPrice * bondValuePrice * securitiesMongo[index].quantity +
@@ -76,6 +90,10 @@ const getCurrentDate = (y = 0) => {
     //если воскресенье
     currentDate = date.getDate() - 2;
   }
+  if (y === 2) {
+    //если нет данных
+    currentDate = date.getDate() - 3;
+  }
   date = year + "-" + month + "-" + currentDate;
   return date;
 };
@@ -89,7 +107,7 @@ const test = async () => {
   }
 };
 const getStockData = async () => {
-  let date = getCurrentDate();
+  let date = getCurrentDate(0);
   let sum = {
     rub_cur: 0, //рубли в кэше
     usd_cur: 0,
@@ -155,8 +173,8 @@ const getStockData = async () => {
     }
   }
   sum.totalUSD = sum.totalRUB / sum.currentUSD;
-  console.l;
-  console.log(sum);
+  // console.l;
+  // console.log(sum);
   return sum;
 };
 
